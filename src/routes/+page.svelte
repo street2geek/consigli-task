@@ -7,8 +7,8 @@
 
 	let stageContainerEl: HTMLDivElement | null = null;
 	let stageConfig = $state({
-		width: 1280,
-		height: 720,
+		width: 1024,
+		height: 768,
 		position: { x: 50, y: 50 },
 		zoom: 1
 	});
@@ -24,10 +24,10 @@
 	function addComponent(component: Component) {}
 
 	onMount(() => {
-		/* if (stageContainerEl) {
-			stageConfig.width = stageContainerEl.offsetWidth;
-			stageConfig.height = stageContainerEl.offsetHeight;
-		} */
+		if (stageContainerEl) {
+			stageConfig.width = window.innerWidth;
+			stageConfig.height = window.innerHeight;
+		}
 	});
 </script>
 
