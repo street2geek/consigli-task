@@ -5,16 +5,18 @@
 	import ZoomIn from '@lucide/svelte/icons/zoom-in';
 	import ZoomOut from '@lucide/svelte/icons/zoom-out';
 	import { stageConfig } from '$lib/state.svelte';
-	import type { Direction } from '$lib/types';
+	import type { Component, Direction } from '$lib/types';
+	import { updateZoom } from '$lib/utils/stage';
 
 	type SideBarProps = ComponentProps<typeof Sidebar.Root>;
 
 	let { ref = $bindable(null), ...restProps }: SideBarProps = $props();
 
-	function setZoom(direction: Direction) {
-		const newZoom = direction === 'in' ? stageConfig.zoom * 1.2 : stageConfig.zoom / 1.2;
-		stageConfig.zoom = Math.max(0.1, Math.min(newZoom, 5));
+	function handleZoom(direction: Direction) {
+		stageConfig.zoom = updateZoom(direction, stageConfig.zoom);
 	}
+
+	function handleAddComponent(component: Component) {}
 </script>
 
 <Sidebar.Root {...restProps} bind:ref>
@@ -22,11 +24,21 @@
 	<Sidebar.Content>
 		<Sidebar.Group>
 			<div class="flex justify-center gap-4">
-				<Button variant="secondary" size="icon" class="size-8" onclick={() => setZoom('in')}>
-					<ZoomIn />
-				</Button>
-				<Button variant="secondary" size="icon" class="size-8" onclick={() => setZoom('out')}>
+				<Button
+					variant="secondary"
+					size="icon"
+					class="size-10 cursor-pointer"
+					onclick={() => handleZoom('out')}
+				>
 					<ZoomOut />
+				</Button>
+				<Button
+					variant="secondary"
+					size="icon"
+					class="size-10 cursor-pointer"
+					onclick={() => handleZoom('in')}
+				>
+					<ZoomIn />
 				</Button>
 			</div>
 		</Sidebar.Group>

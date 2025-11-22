@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Layer, Stage, Rect, Line } from 'svelte-konva';
+	import { Layer, Stage, Rect, Line, type KonvaWheelEvent } from 'svelte-konva';
 	import { browser } from '$app/environment';
 	import { CELL_SIZE } from '$lib/constants';
-	import type { Component, Direction } from '$lib/types';
+	import type { Component } from '$lib/types';
 	import { stageConfig } from '$lib/state.svelte';
+	import { updateZoom } from '$lib/utils/stage';
 
 	let stageContainerEl: HTMLDivElement | null = null;
 
@@ -16,21 +17,42 @@
 	let gridLinesHorizontal = $derived(stageConfig.ceilingHeight + 1);
 	let gridLinesVertical = $derived(stageConfig.ceilingWidth + 1);
 
-	function addComponent(component: Component) {}
-
 	onMount(() => {
 		if (stageContainerEl) {
 			stageConfig.dimensions.width = window.innerWidth - 255;
 			stageConfig.dimensions.height = window.innerHeight - 64;
 		}
 	});
+
+	function handleZoom(e: KonvaWheelEvent) {
+		e.evt.preventDefault();
+
+		const stage = e.target.getStage();
+		if (!stage) return;
+
+		const prevScale = stageConfig.zoom;
+		const pointer = stage.getPointerPosition();
+		if (!pointer) return;
+
+		const mousePointTo = {
+			x: (pointer.x - stageConfig.position.x) / prevScale,
+			y: (pointer.y - stageConfig.position.y) / prevScale
+		};
+
+		const direction = e.evt.deltaY < 0 ? 'in' : 'out';
+		const newScale = updateZoom(direction, prevScale);
+
+		stageConfig.zoom = newScale;
+		stageConfig.position.x = pointer.x - mousePointTo.x * newScale;
+		stageConfig.position.y = pointer.y - mousePointTo.y * newScale;
+	}
 </script>
 
 <div
 	id="stageContainer"
 	data-testid="stageContainer"
 	bind:this={stageContainerEl}
-	class="flex overflow-hidden bg-gray-100"
+	class="overflow-hidden bg-gray-100"
 >
 	{#if browser}
 		<Stage
@@ -40,6 +62,13 @@
 			x={stageConfig.position.x}
 			scaleX={stageConfig.zoom}
 			scaleY={stageConfig.zoom}
+			draggable={true}
+			onwheel={handleZoom}
+			ondragend={(e) => {
+				const pos = e.target.position();
+				stageConfig.position.x = pos.x;
+				stageConfig.position.y = pos.y;
+			}}
 		>
 			<Layer>
 				<Rect
