@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import { Button } from './ui/button';
+	import { Button } from '../ui/button';
 	import ZoomIn from '@lucide/svelte/icons/zoom-in';
 	import ZoomOut from '@lucide/svelte/icons/zoom-out';
 	import { stageConfig, selectedComponent } from '$lib/state.svelte';
 	import type { CeilingComponent, Direction } from '$lib/types';
 	import { updateZoom } from '$lib/utils/stage';
-	import { CEILING_COMPONENTS } from '$lib/constants';
+	import { CEILING_COMPONENT_TYPES as CEILING_COMPONENTS } from '$lib/constants';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 
@@ -22,6 +22,7 @@
 		// Toggle selection off if the same component is clicked
 		if (selectedComponent.id === component.id) {
 			selectedComponent.id = '';
+			selectedComponent.name = '';
 			return;
 		}
 		selectedComponent.id = component.id;

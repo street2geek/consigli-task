@@ -7,4 +7,11 @@ export type CeilingComponent = {
 	icon: Icon;
 };
 
+export type StageComponent = {
+	id: string;
+	type: string;
+	x: number;
+	y: number;
+};
+
 export type Direction = 'in' | 'out';
