@@ -7,26 +7,27 @@
 
 	let stageContainerEl: HTMLDivElement | null = null;
 	let stageConfig = $state({
-		width: 1024,
-		height: 768,
-		position: { x: 50, y: 50 },
-		zoom: 1
+		ceilingWidth: 25,
+		ceilingHeight: 20,
+		position: { x: 64, y: 64 },
+		zoom: 1,
+		dimensions: { width: 1024, height: 768 }
 	});
 	let invalidCells = $state(new Set());
 	let components = $state([]);
 	let selectedComponentId = $state(null);
 	let selectedComponentControl = $state(null);
 
-	let gridLinesHorizontal = $derived(stageConfig.width + 1);
-	let gridLinesVerticle = $derived(stageConfig.height + 1);
+	let gridLinesHorizontal = $derived(stageConfig.ceilingHeight + 1);
+	let gridLinesVertical = $derived(stageConfig.ceilingWidth + 1);
 
 	function setZoom(direction: Direction) {}
 	function addComponent(component: Component) {}
 
 	onMount(() => {
 		if (stageContainerEl) {
-			stageConfig.width = window.innerWidth;
-			stageConfig.height = window.innerHeight;
+			stageConfig.dimensions.width = window.innerWidth - 255;
+			stageConfig.dimensions.height = window.innerHeight - 64;
 		}
 	});
 </script>
@@ -39,8 +40,8 @@
 >
 	{#if browser}
 		<Stage
-			width={stageConfig.width}
-			height={stageConfig.height}
+			width={stageConfig.dimensions.width}
+			height={stageConfig.dimensions.height}
 			y={stageConfig.position.y}
 			x={stageConfig.position.x}
 			scaleX={stageConfig.zoom}
@@ -50,36 +51,32 @@
 				<Rect
 					x={0}
 					y={0}
-					width={stageConfig.width * CELL_SIZE}
-					height={stageConfig.height * CELL_SIZE}
+					width={stageConfig.ceilingWidth * CELL_SIZE}
+					height={stageConfig.ceilingHeight * CELL_SIZE}
 					fill="#fff"
 					stroke="#ddd"
 					strokeWidth={1}
 				/>
-				{#each Array(gridLinesVerticle) as _, index}
+				{#each Array(gridLinesVertical) as _, index}
 					<Line
 						stroke="#e5e7eb"
 						strokeWidth={1}
-						points={[index * CELL_SIZE, 0, index * CELL_SIZE, stageConfig.height * CELL_SIZE]}
+						points={[
+							index * CELL_SIZE,
+							0,
+							index * CELL_SIZE,
+							stageConfig.ceilingHeight * CELL_SIZE
+						]}
 					/>
 				{/each}
 				{#each Array(gridLinesHorizontal) as _, index}
 					<Line
 						stroke="#e5e7eb"
 						strokeWidth={1}
-						points={[0, index * CELL_SIZE, stageConfig.width * CELL_SIZE, index * CELL_SIZE]}
+						points={[0, index * CELL_SIZE, stageConfig.ceilingWidth * CELL_SIZE, index * CELL_SIZE]}
 					/>
 				{/each}
 			</Layer>
 		</Stage>
 	{/if}
 </div>
-
-<style>
-	#stageContainer {
-		max-width: 1024;
-		max-height: 768;
-		width: 100%;
-		height: 100%;
-	}
-</style>
