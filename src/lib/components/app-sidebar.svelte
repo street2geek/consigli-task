@@ -3,8 +3,8 @@
 	import { Button } from './ui/button';
 	import ZoomIn from '@lucide/svelte/icons/zoom-in';
 	import ZoomOut from '@lucide/svelte/icons/zoom-out';
-	import { stageConfig } from '$lib/state.svelte';
-	import type { Component, Direction } from '$lib/types';
+	import { stageConfig, selectedComponent } from '$lib/state.svelte';
+	import type { CeilingComponent, Direction } from '$lib/types';
 	import { updateZoom } from '$lib/utils/stage';
 	import { CEILING_COMPONENTS } from '$lib/constants';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -18,7 +18,15 @@
 		stageConfig.zoom = updateZoom(direction, stageConfig.zoom);
 	}
 
-	function handleAddComponent(component: Component) {}
+	function handleSelectComponent(component: CeilingComponent) {
+		// Toggle selection off if the same component is clicked
+		if (selectedComponent.id === component.id) {
+			selectedComponent.id = '';
+			return;
+		}
+		selectedComponent.id = component.id;
+		selectedComponent.name = component.name;
+	}
 </script>
 
 <Sidebar.Root {...restProps} bind:ref>
@@ -46,14 +54,17 @@
 		</Sidebar.Group>
 		<Sidebar.Group>
 			<div class="flex flex-col items-center">
-				<h2 class="text-2xl">Add Component</h2>
+				<h2 class="mb-2 text-xl font-semibold">Add Component</h2>
 				<ToggleGroup.Root variant="outline" orientation="vertical" type="single">
-					{#each Object.values(CEILING_COMPONENTS) as component}
+					{#each Object.values(CEILING_COMPONENTS) as item}
+						{@const Icon = item.icon}
 						<ToggleGroup.Item
-							value={component.id}
-							onclick={() => handleAddComponent(component as Component)}
+							value={item.id}
+							onclick={() => handleSelectComponent(item as CeilingComponent)}
+							class="w-full px-4 py-2"
 						>
-							{component.name}
+							<Icon />
+							{item.name}
 						</ToggleGroup.Item>
 					{/each}
 				</ToggleGroup.Root>

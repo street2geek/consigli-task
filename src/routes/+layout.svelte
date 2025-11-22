@@ -7,6 +7,7 @@
 
 	let { children } = $props();
 	import { onMount } from 'svelte';
+	import { selectedComponent } from '$lib/state.svelte';
 
 	type Theme = 'light' | 'dark' | 'system';
 	let theme = $state<Theme>('system');
@@ -81,6 +82,10 @@
 				<Sidebar.Trigger />
 				<Separator orientation="vertical" class="mr-2 h-4" />
 			</div>
+			<p class="text-sm">
+				<span class="font-semibold">Selected Component:</span>
+				{selectedComponent.name}
+			</p>
 		</header>
 		<main class="site-main">{@render children()}</main>
 	</Sidebar.Inset>

@@ -3,16 +3,16 @@
 	import { Layer, Stage, Rect, Line, type KonvaWheelEvent } from 'svelte-konva';
 	import { browser } from '$app/environment';
 	import { CELL_SIZE } from '$lib/constants';
-	import type { Component } from '$lib/types';
+	import type { CeilingComponent } from '$lib/types';
 	import { stageConfig } from '$lib/state.svelte';
 	import { updateZoom } from '$lib/utils/stage';
+	import { SvelteSet } from 'svelte/reactivity';
 
 	let stageContainerEl: HTMLDivElement | null = null;
 
-	let invalidCells = $state(new Set());
-	let components = $state([]);
-	let selectedComponentId = $state(null);
-	let selectedComponentControl = $state(null);
+	let stageComponents = $state([]);
+	let selectedStageComponentId = $state(null);
+	let invalidCells = new SvelteSet();
 
 	let gridLinesHorizontal = $derived(stageConfig.ceilingHeight + 1);
 	let gridLinesVertical = $derived(stageConfig.ceilingWidth + 1);
@@ -76,13 +76,13 @@
 					y={0}
 					width={stageConfig.ceilingWidth * CELL_SIZE}
 					height={stageConfig.ceilingHeight * CELL_SIZE}
-					fill="#fff"
+					fill="#E2E2D7"
 					stroke="#ddd"
 					strokeWidth={1}
 				/>
 				{#each Array(gridLinesVertical) as _, index}
 					<Line
-						stroke="#e5e7eb"
+						stroke="#6D8196"
 						strokeWidth={1}
 						points={[
 							index * CELL_SIZE,
@@ -94,7 +94,7 @@
 				{/each}
 				{#each Array(gridLinesHorizontal) as _, index}
 					<Line
-						stroke="#e5e7eb"
+						stroke="#6D8196"
 						strokeWidth={1}
 						points={[0, index * CELL_SIZE, stageConfig.ceilingWidth * CELL_SIZE, index * CELL_SIZE]}
 					/>
