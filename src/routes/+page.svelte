@@ -1,18 +1,13 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { Layer, Stage, Rect, Line } from 'svelte-konva';
 	import { browser } from '$app/environment';
 	import { CELL_SIZE } from '$lib/constants';
 	import type { Component, Direction } from '$lib/types';
-	import { onMount } from 'svelte';
-	import { Layer, Stage, Rect, Line } from 'svelte-konva';
+	import { stageConfig } from '$lib/state.svelte';
 
 	let stageContainerEl: HTMLDivElement | null = null;
-	let stageConfig = $state({
-		ceilingWidth: 25,
-		ceilingHeight: 20,
-		position: { x: 64, y: 64 },
-		zoom: 1,
-		dimensions: { width: 1024, height: 768 }
-	});
+
 	let invalidCells = $state(new Set());
 	let components = $state([]);
 	let selectedComponentId = $state(null);
@@ -21,7 +16,6 @@
 	let gridLinesHorizontal = $derived(stageConfig.ceilingHeight + 1);
 	let gridLinesVertical = $derived(stageConfig.ceilingWidth + 1);
 
-	function setZoom(direction: Direction) {}
 	function addComponent(component: Component) {}
 
 	onMount(() => {
