@@ -51,6 +51,7 @@
 	},
 	"dependencies": {
 		"konva": "^10.0.9",
+		"lucide": "^0.554.0",
 		"svelte-konva": "^1.0.1"
 	}
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { CEILING_COMPONENT_TYPES, CELL_SIZE } from '$lib/constants';
 	import type { StageComponent } from '$lib/types';
-	import { Circle, Group, Text } from 'svelte-konva';
+	import { Circle, Group, Path } from 'svelte-konva';
 
 	let { component } = $props<{ component: StageComponent }>();
 	const componentType =
@@ -18,5 +18,9 @@
 		strokeWidth={2}
 		listening={false}
 	/>
-	<Text x={-8} y={-10} text={componentType.symbol} fontSize={20} fill="black" listening={false} />
+	<Group x={-12} y={-12} scaleX={1} scaleY={1}>
+		{#each componentType.svgPaths as pathData}
+			<Path data={pathData} fill="black" listening={false} />
+		{/each}
+	</Group>
 </Group>

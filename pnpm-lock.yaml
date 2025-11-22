@@ -11,6 +11,9 @@ importers:
       konva:
         specifier: ^10.0.9
         version: 10.0.9
+      lucide:
+        specifier: ^0.554.0
+        version: 0.554.0
       svelte-konva:
         specifier: ^1.0.1
         version: 1.0.1(konva@10.0.9)(svelte@5.43.12)
@@ -1190,6 +1193,9 @@ packages:
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
+
+  lucide@0.554.0:
+    resolution: {integrity: sha512-heltqxp+r6FbXs5FKMwARbE9aiDLLz9rlAlOU48NYHU4nWi2oVkQIz+Uv7LHZNsFVfgtgLBv7VOjM7QUvT6F3A==}
 
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
@@ -2706,6 +2712,8 @@ snapshots:
       p-locate: 5.0.0
 
   lodash.merge@4.6.2: {}
+
+  lucide@0.554.0: {}
 
   lz-string@1.5.0: {}
 
