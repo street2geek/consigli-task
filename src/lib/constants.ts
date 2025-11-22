@@ -3,9 +3,9 @@ const PIXELS_PER_METER = 66.67; // scale factor
 export const CELL_SIZE = GRID_SIZE * PIXELS_PER_METER;
 
 export const CEILING_COMPONENTS = {
-	AIR_RETURN: { id: 'air_return', name: 'Air Return' },
-	AIR_SUPPLY: { id: 'air_supply', name: 'Air Supply' },
-	LIGHT: { id: 'light', name: 'Light' },
-	SMOKE_DETECTOR: { id: 'smoke_detector', name: 'Smoke Detector' },
-	INVALID_AREA: { id: 'invalid_area', name: 'Invalid Area' }
+	AIR_RETURN: { id: 'airReturn', name: 'Air Return', color: 'bg-gray-500/30' },
+	AIR_SUPPLY: { id: 'airSupply', name: 'Air Supply', color: 'bg-blue-500/30' },
+	LIGHT: { id: 'lightFitting', name: 'Light Fitting', color: 'bg-white/30' },
+	SMOKE_DETECTOR: { id: 'smokeDetector', name: 'Smoke Detector', color: 'bg-yellow-500/30' },
+	INVALID_AREA: { id: 'invalidArea', name: 'Invalid Area', color: 'bg-red-500/30' }
 };
