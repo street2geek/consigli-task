@@ -65,6 +65,7 @@
 			</p>
 			<div class="flex items-center gap-2 px-3">
 				<Toggle
+					class="cursor-pointer"
 					pressed={theme === 'dark'}
 					onPressedChange={toggleTheme}
 					aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}

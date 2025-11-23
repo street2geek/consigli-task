@@ -162,7 +162,7 @@
 	id="stageContainer"
 	data-testid="stageContainer"
 	bind:this={stageContainerEl}
-	class="overflow-hidden bg-gray-100"
+	class="overflow-hidden bg-gray-100 dark:bg-gray-800"
 	style="cursor: {selectedComponentType.id ? 'crosshair' : 'default'}"
 	role="application"
 	aria-label="Ceiling design canvas. Click to place components."
