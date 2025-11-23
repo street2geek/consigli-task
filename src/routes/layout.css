@@ -116,13 +116,13 @@
 		@apply border-border outline-ring/50;
 	}
 	body {
+		-webkit-font-smoothing: antialiased;
 		@apply bg-background text-foreground;
 		transition:
 			background-color 160ms linear,
 			color 160ms linear;
 		@media (prefers-reduced-motion: reduce) {
 			transition: none;
-      
 		}
 	}
 }
