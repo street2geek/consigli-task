@@ -1,8 +1,8 @@
 import { AlarmSmoke, Fan, Lightbulb, X, WindArrowDown } from '@lucide/svelte';
 import * as lucideIcons from 'lucide';
 
-const GRID_SIZE = 0.6;
 const PIXELS_PER_METER = 66.67; // scale factor
+export const GRID_SIZE = 0.6;
 export const CELL_SIZE = GRID_SIZE * PIXELS_PER_METER;
 
 // Helper to convert lucide icon to SVG path string
