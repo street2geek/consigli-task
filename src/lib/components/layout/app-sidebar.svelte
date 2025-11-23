@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { ComponentProps } from 'svelte';
-	import { Button } from '../ui/button';
 	import ZoomIn from '@lucide/svelte/icons/zoom-in';
 	import ZoomOut from '@lucide/svelte/icons/zoom-out';
-	import { stageConfig, selectedComponent } from '$lib/state.svelte';
-	import type { CeilingComponent, Direction } from '$lib/types';
-	import { updateZoom } from '$lib/utils/stage';
+	import { stageConfig, selectedComponentType } from '$lib/state.svelte';
 	import { CEILING_COMPONENT_TYPES as CEILING_COMPONENTS } from '$lib/constants';
+	import type { CeilingComponent, Direction } from '$lib/types';
+	import { Button } from '$lib/components/ui/button';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
+	import { updateZoom } from '$lib/utils/stage';
 
 	type SideBarProps = ComponentProps<typeof Sidebar.Root>;
 
@@ -20,13 +20,13 @@
 
 	function handleSelectComponent(component: CeilingComponent) {
 		// Toggle selection off if the same component is clicked
-		if (selectedComponent.id === component.id) {
-			selectedComponent.id = '';
-			selectedComponent.name = '';
+		if (selectedComponentType.id === component.id) {
+			selectedComponentType.id = '';
+			selectedComponentType.name = '';
 			return;
 		}
-		selectedComponent.id = component.id;
-		selectedComponent.name = component.name;
+		selectedComponentType.id = component.id;
+		selectedComponentType.name = component.name;
 	}
 </script>
 
@@ -69,6 +69,11 @@
 						</ToggleGroup.Item>
 					{/each}
 				</ToggleGroup.Root>
+			</div>
+		</Sidebar.Group>
+		<Sidebar.Group>
+			<div class="flex flex-col items-center">
+				<h2 class="mb-2 text-xl font-semibold">Alter Dimensions</h2>
 			</div>
 		</Sidebar.Group>
 	</Sidebar.Content>

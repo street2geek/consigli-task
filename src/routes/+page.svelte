@@ -8,19 +8,23 @@
 		type KonvaWheelEvent,
 		type KonvaMouseEvent
 	} from 'svelte-konva';
+	import { SvelteSet } from 'svelte/reactivity';
 	import { browser } from '$app/environment';
 	import { CEILING_COMPONENT_TYPES as CEILING_COMPONENTS, CELL_SIZE } from '$lib/constants';
-	import { selectedComponent, stageConfig } from '$lib/state.svelte';
+	import type { StageComponent } from '$lib/types';
+	import { selectedComponentType, stageConfig } from '$lib/state.svelte';
 	import { updateZoom } from '$lib/utils/stage';
-	import { SvelteSet } from 'svelte/reactivity';
+	import { isWithinBounds } from '$lib/utils/stage';
 	import CeilingInvalid from '$lib/components/ceiling-invalid.svelte';
 	import CeilingComponent from '$lib/components/ceiling-component.svelte';
-	import type { StageComponent } from '$lib/types';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { CircleX } from '@lucide/svelte';
 
 	let stageContainerEl: HTMLDivElement | null = null;
-	let stageComponents = $state<StageComponent[]>([]);
-	let selectedStageComponentId = $state(null);
 	let invalidCells = new SvelteSet('');
+	let stageComponents = $state<StageComponent[]>([]);
+	let componentToDelete = $state('');
+	let showDeleteDialog = $state(false);
 
 	let gridLinesHorizontal = $derived(stageConfig.ceilingHeight + 1);
 	let gridLinesVertical = $derived(stageConfig.ceilingWidth + 1);
@@ -69,42 +73,78 @@
 		const x = Math.floor(stageX / CELL_SIZE);
 		const y = Math.floor(stageY / CELL_SIZE);
 
-		/* console.log('Click debug:', {
-			pointer,
-			stageConfig: { position: stageConfig.position, zoom: stageConfig.zoom },
-			stageCoords: { stageX, stageY },
-			cellCoords: { x, y },
-			cellCoord: `${x},${y}`,
-			CELL_SIZE,
-			invalidCellsBefore: Array.from(invalidCells)
-		}); */
+		if (!isWithinBounds(x, y, stageConfig.ceilingWidth, stageConfig.ceilingHeight)) {
+			return;
+		}
 
-		if (x >= 0 && x < stageConfig.ceilingWidth && y >= 0 && y < stageConfig.ceilingHeight) {
-			const cellCoord = `${x},${y}`;
+		const cellCoord = `${x},${y}`;
 
-			if (selectedComponent.id === CEILING_COMPONENTS.INVALID_AREA.id) {
-				if (invalidCells.has(cellCoord)) {
-					invalidCells.delete(cellCoord);
-				} else {
-					invalidCells.add(cellCoord);
-				}
-			}
-
-			if (selectedComponent.id && selectedComponent.id !== CEILING_COMPONENTS.INVALID_AREA.id) {
-				if (!invalidCells.has(cellCoord)) {
-					//Check if component already exists at this position
-					const exists = stageComponents.some((comp) => comp.x === x && comp.y === y);
-					if (exists) return;
-					const newComponent = {
-						id: crypto.randomUUID(),
-						type: selectedComponent.id,
-						x: x,
-						y: y
-					};
-					stageComponents = [...stageComponents, newComponent];
-				}
+		if (selectedComponentType.id === CEILING_COMPONENTS.INVALID_AREA.id) {
+			if (invalidCells.has(cellCoord)) {
+				invalidCells.delete(cellCoord);
+			} else {
+				invalidCells.add(cellCoord);
 			}
 		}
+
+		if (
+			selectedComponentType.id &&
+			selectedComponentType.id !== CEILING_COMPONENTS.INVALID_AREA.id
+		) {
+			if (!invalidCells.has(cellCoord)) {
+				//Check if component already exists at this position
+				const exists = stageComponents.some((comp) => comp.x === x && comp.y === y);
+				if (exists) return;
+				const newComponent = {
+					id: crypto.randomUUID(),
+					type: selectedComponentType.id,
+					x: x,
+					y: y
+				};
+				stageComponents = [...stageComponents, newComponent];
+			}
+		}
+	}
+
+	function handleComponentDragEnd(id: string, finalX: number, finalY: number) {
+		if (!isWithinBounds(finalX, finalY, stageConfig.ceilingWidth, stageConfig.ceilingHeight)) {
+			return;
+		}
+
+		const cellCoord = `${finalX},${finalY}`;
+
+		if (invalidCells.has(cellCoord)) {
+			return;
+		}
+
+		const exists = stageComponents.some(
+			(comp) => comp.id !== id && comp.x === finalX && comp.y === finalY
+		);
+
+		if (exists) {
+			return;
+		}
+
+		// Update component position
+		stageComponents = stageComponents.map((comp) =>
+			comp.id === id ? { ...comp, x: finalX, y: finalY } : comp
+		);
+	}
+
+	function handleComponentSelect(id: string) {
+		componentToDelete = id;
+		showDeleteDialog = true;
+	}
+
+	function confirmDelete() {
+		stageComponents = stageComponents.filter((comp) => comp.id !== componentToDelete);
+		componentToDelete = '';
+		showDeleteDialog = false;
+	}
+
+	function cancelDelete() {
+		componentToDelete = '';
+		showDeleteDialog = false;
 	}
 </script>
 
@@ -113,7 +153,7 @@
 	data-testid="stageContainer"
 	bind:this={stageContainerEl}
 	class="overflow-hidden bg-gray-100"
-	style="cursor: {selectedComponent.id ? 'crosshair' : 'default'}"
+	style="cursor: {selectedComponentType.id ? 'crosshair' : 'default'}"
 >
 	{#if browser}
 		<Stage
@@ -125,12 +165,15 @@
 			scaleY={stageConfig.zoom}
 			draggable={true}
 			onwheel={handleZoom}
-			ondragend={(e) => {
-				const pos = e.target.position();
-				stageConfig.position.x = pos.x;
-				stageConfig.position.y = pos.y;
-			}}
 			onclick={handleStageClick}
+			ondragend={(e) => {
+				// Only update position if the Stage itself was dragged, not a child component
+				if (e.target === e.target.getStage()) {
+					const pos = e.target.position();
+					stageConfig.position.x = pos.x;
+					stageConfig.position.y = pos.y;
+				}
+			}}
 		>
 			<Layer>
 				<Rect
@@ -172,9 +215,30 @@
 				{/each}
 
 				{#each stageComponents as comp (comp.id)}
-					<CeilingComponent component={comp} />
+					<CeilingComponent
+						onSelect={handleComponentSelect}
+						onDragEnd={handleComponentDragEnd}
+						component={comp}
+					/>
 				{/each}
 			</Layer>
 		</Stage>
 	{/if}
 </div>
+
+<AlertDialog.Root bind:open={showDeleteDialog}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title
+				><CircleX class="mr-2 inline-block text-red-300" />Delete Component</AlertDialog.Title
+			>
+			<AlertDialog.Description>
+				Are you sure you want to delete this component? This action cannot be undone.
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel onclick={cancelDelete}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={confirmDelete}>Delete</AlertDialog.Action>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>

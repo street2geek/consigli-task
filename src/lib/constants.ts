@@ -18,7 +18,6 @@ export const CEILING_COMPONENT_TYPES = {
 		id: 'air_return',
 		name: 'Air Return',
 		color: 'rgba(107, 114, 128, 0.3)',
-		canvasColor: 'bg-gray-500/30',
 		svgPaths: getSvgPaths(lucideIcons.WindArrowDown),
 		icon: WindArrowDown
 	},

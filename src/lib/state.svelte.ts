@@ -6,7 +6,7 @@ export const stageConfig = $state({
 	dimensions: { width: 1024, height: 768 }
 });
 
-export const selectedComponent = $state({
+export const selectedComponentType = $state({
 	id: '',
 	name: ''
 });

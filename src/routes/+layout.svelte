@@ -7,7 +7,7 @@
 
 	let { children } = $props();
 	import { onMount } from 'svelte';
-	import { selectedComponent } from '$lib/state.svelte';
+	import { selectedComponentType } from '$lib/state.svelte';
 
 	type Theme = 'light' | 'dark' | 'system';
 	let theme = $state<Theme>('system');
@@ -84,7 +84,7 @@
 			</div>
 			<p class="text-sm">
 				<span class="font-semibold">Selected Component:</span>
-				{selectedComponent.name}
+				{selectedComponentType.name}
 			</p>
 		</header>
 		<main class="site-main">{@render children()}</main>
