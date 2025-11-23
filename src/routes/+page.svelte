@@ -13,8 +13,7 @@
 	import { CEILING_COMPONENT_TYPES as CEILING_COMPONENTS, CELL_SIZE } from '$lib/constants';
 	import type { StageComponent } from '$lib/types';
 	import { selectedComponentType, stageConfig } from '$lib/state.svelte';
-	import { updateZoom } from '$lib/utils/stage';
-	import { isWithinBounds } from '$lib/utils/stage';
+	import { updateZoom, isWithinBounds } from '$lib/utils/stage';
 	import CeilingInvalid from '$lib/components/ceiling-invalid.svelte';
 	import CeilingComponent from '$lib/components/ceiling-component.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
@@ -111,8 +110,8 @@
 			return;
 		}
 
+		// TODO: fix bug allowing placement on occupied or invalid cells when dragging
 		const cellCoord = `${finalX},${finalY}`;
-
 		if (invalidCells.has(cellCoord)) {
 			return;
 		}
@@ -120,7 +119,6 @@
 		const exists = stageComponents.some(
 			(comp) => comp.id !== id && comp.x === finalX && comp.y === finalY
 		);
-
 		if (exists) {
 			return;
 		}

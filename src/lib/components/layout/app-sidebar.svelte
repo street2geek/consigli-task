@@ -20,7 +20,7 @@
 	}
 
 	function handleSelectComponent(component: CeilingComponent) {
-		// Toggle selection off if the same component is clicked
+		// Toggle selection off if the same component type is clicked
 		if (selectedComponentType.id === component.id) {
 			selectedComponentType.id = '';
 			selectedComponentType.name = '';

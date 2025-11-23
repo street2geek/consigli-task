@@ -4,69 +4,45 @@
 	import AppSidebar from '$lib/components/layout/app-sidebar.svelte';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
+	import { Toggle } from '$lib/components/ui/toggle/index.js';
+	import { Sun, Moon } from '@lucide/svelte';
 
 	let { children } = $props();
 	import { onMount } from 'svelte';
 	import { selectedComponentType } from '$lib/state.svelte';
 
-	type Theme = 'light' | 'dark' | 'system';
-	let theme = $state<Theme>('system');
-	let resolved = $state('light'); // actual applied theme
+	type Theme = 'light' | 'dark';
+	let theme = $state<Theme>('dark');
 
 	const STORAGE_KEY = 'theme-preference';
 
 	function applyTheme(t: Theme) {
-		if (t === 'system') {
-			const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			resolved = dark ? 'dark' : 'light';
-		} else {
-			resolved = t;
-		}
-		document.documentElement.classList.toggle('dark', resolved === 'dark');
-	}
-
-	function saveTheme(t: Theme) {
+		theme = t;
+		document.documentElement.classList.toggle('dark', t === 'dark');
+		// Save preference
 		try {
 			localStorage.setItem(STORAGE_KEY, t);
 		} catch (e) {
-			// ignore
+			console.error('Failed to save theme preference', e);
 		}
 	}
 
 	function toggleTheme() {
-		if (theme === 'dark') theme = 'light';
-		else if (theme === 'light') theme = 'system';
-		else theme = 'dark';
-		applyTheme(theme);
-		saveTheme(theme);
-	}
-
-	function handleSystemChange(e: MediaQueryListEvent) {
-		if (theme === 'system') applyTheme('system');
+		applyTheme(theme === 'dark' ? 'light' : 'dark');
 	}
 
 	onMount(() => {
-		// load saved preference
+		// Load saved preference
 		try {
 			const saved = localStorage.getItem(STORAGE_KEY) as Theme | null;
-			if (saved === 'light' || saved === 'dark' || saved === 'system') theme = saved;
+			if (saved === 'light' || saved === 'dark') {
+				theme = saved;
+			}
 		} catch (e) {
-			// ignore
+			console.error('Failed to load theme preference', e);
 		}
-
-		// initial apply
-		applyTheme(theme);
-
-		// watch system changes
-		const mq = window.matchMedia('(prefers-color-scheme: dark)');
-		// addEventListener may not exist on older Safari, but modern browsers support it
-		if (mq.addEventListener) mq.addEventListener('change', handleSystemChange);
-		else mq.addListener(handleSystemChange as any);
-
-		return () => {
-			if (mq.removeEventListener) mq.removeEventListener('change', handleSystemChange);
-			else mq.removeListener(handleSystemChange as any);
-		};
+		// apply current theme to DOM
+		document.documentElement.classList.toggle('dark', theme === 'dark');
 	});
 </script>
 
@@ -82,10 +58,19 @@
 				<Sidebar.Trigger />
 				<Separator orientation="vertical" class="mr-2 h-4" />
 			</div>
-			<p class="text-sm">
+			<p class="flex-1 text-sm">
 				<span class="font-semibold">Selected Component:</span>
 				{selectedComponentType.name}
 			</p>
+			<div class="flex items-center gap-2 px-3">
+				<Toggle pressed={theme === 'dark'} onPressedChange={toggleTheme} aria-label="Toggle theme">
+					{#if theme === 'dark'}
+						<Moon class="h-4 w-4" />
+					{:else}
+						<Sun class="h-4 w-4" />
+					{/if}
+				</Toggle>
+			</div>
 		</header>
 		<main class="site-main">{@render children()}</main>
 	</Sidebar.Inset>
