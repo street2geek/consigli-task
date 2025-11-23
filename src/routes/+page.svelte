@@ -6,7 +6,8 @@
 		Rect,
 		Line,
 		type KonvaWheelEvent,
-		type KonvaMouseEvent
+		type KonvaMouseEvent,
+		type KonvaTouchEvent
 	} from 'svelte-konva';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { browser } from '$app/environment';
@@ -73,7 +74,7 @@
 		stageConfig.position.y = pointer.y - mousePointTo.y * newScale;
 	}
 
-	function handleStageClick(e: KonvaMouseEvent) {
+	function handleStageClick(e: KonvaMouseEvent | KonvaTouchEvent) {
 		const stage = e.target.getStage();
 		if (!stage) return;
 
@@ -181,6 +182,7 @@
 			draggable={true}
 			onwheel={handleZoom}
 			onclick={handleStageClick}
+			ontap={handleStageClick}
 			ondragend={(e) => {
 				// Only update position if the Stage itself was dragged, not a child component
 				if (e.target === e.target.getStage()) {
