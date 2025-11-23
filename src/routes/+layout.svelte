@@ -47,6 +47,7 @@
 </script>
 
 <svelte:head>
+	<title>Room Ceiling Designer</title>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
@@ -58,12 +59,16 @@
 				<Sidebar.Trigger />
 				<Separator orientation="vertical" class="mr-2 h-4" />
 			</div>
-			<p class="flex-1 text-sm">
+			<p class="flex-1 text-sm" role="status" aria-live="polite" aria-atomic="true">
 				<span class="font-semibold">Selected Component:</span>
-				{selectedComponentType.name}
+				{selectedComponentType.name || 'None'}
 			</p>
 			<div class="flex items-center gap-2 px-3">
-				<Toggle pressed={theme === 'dark'} onPressedChange={toggleTheme} aria-label="Toggle theme">
+				<Toggle
+					pressed={theme === 'dark'}
+					onPressedChange={toggleTheme}
+					aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+				>
 					{#if theme === 'dark'}
 						<Moon class="h-4 w-4" />
 					{:else}
@@ -72,6 +77,6 @@
 				</Toggle>
 			</div>
 		</header>
-		<main class="site-main">{@render children()}</main>
+		<main class="site-main" aria-label="Canvas area">{@render children()}</main>
 	</Sidebar.Inset>
 </Sidebar.Provider>

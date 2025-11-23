@@ -33,6 +33,21 @@
 			stageConfig.dimensions.width = window.innerWidth - 255;
 			stageConfig.dimensions.height = window.innerHeight - 64;
 		}
+
+		function handleKeyPress(e: KeyboardEvent) {
+			// Escape to deselect or close dialog
+			if (e.key === 'Escape') {
+				if (showDeleteDialog) {
+					cancelDelete();
+				} else if (selectedComponentType.id) {
+					selectedComponentType.id = '';
+					selectedComponentType.name = '';
+				}
+			}
+		}
+
+		window.addEventListener('keydown', handleKeyPress);
+		return () => window.removeEventListener('keydown', handleKeyPress);
 	});
 
 	function handleZoom(e: KonvaWheelEvent) {
@@ -152,6 +167,8 @@
 	bind:this={stageContainerEl}
 	class="overflow-hidden bg-gray-100"
 	style="cursor: {selectedComponentType.id ? 'crosshair' : 'default'}"
+	role="application"
+	aria-label="Ceiling design canvas. Click to place components."
 >
 	{#if browser}
 		<Stage

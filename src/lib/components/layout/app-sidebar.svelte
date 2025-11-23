@@ -10,6 +10,7 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import * as ToggleGroup from '$lib/components/ui/toggle-group/index.js';
 	import { updateZoom } from '$lib/utils/stage';
+	import { getComponentById } from '$lib/utils';
 
 	type SideBarProps = ComponentProps<typeof Sidebar.Root>;
 
@@ -19,16 +20,17 @@
 		stageConfig.zoom = updateZoom(direction, stageConfig.zoom);
 	}
 
-	function handleSelectComponent(component: CeilingComponent) {
-		// Toggle selection off if the same component type is clicked
-		if (selectedComponentType.id === component.id) {
-			selectedComponentType.id = '';
+	// Sync name when id changes (from ToggleGroup binding or keyboard)
+	$effect(() => {
+		if (selectedComponentType.id) {
+			const component = getComponentById(selectedComponentType.id);
+			if (component) {
+				selectedComponentType.name = component.name;
+			}
+		} else {
 			selectedComponentType.name = '';
-			return;
 		}
-		selectedComponentType.id = component.id;
-		selectedComponentType.name = component.name;
-	}
+	});
 
 	const roomAreaMeters = $derived(
 		(stageConfig.ceilingWidth * stageConfig.ceilingHeight * GRID_SIZE * GRID_SIZE).toFixed(1)
@@ -36,7 +38,9 @@
 </script>
 
 <Sidebar.Root {...restProps} bind:ref>
-	<Sidebar.Header class="text-md text-center font-mono">Room Ceiling Designer</Sidebar.Header>
+	<Sidebar.Header class="text-md text-center font-mono"
+		><h1>Room Ceiling Designer</h1></Sidebar.Header
+	>
 	<Sidebar.Content>
 		<Sidebar.Group>
 			<div class="flex justify-center gap-4">
@@ -45,6 +49,7 @@
 					size="icon"
 					class="size-10 cursor-pointer"
 					onclick={() => handleZoom('out')}
+					aria-label="Zoom out"
 				>
 					<ZoomOut />
 				</Button>
@@ -53,6 +58,7 @@
 					size="icon"
 					class="size-10 cursor-pointer"
 					onclick={() => handleZoom('in')}
+					aria-label="Zoom in"
 				>
 					<ZoomIn />
 				</Button>
@@ -61,14 +67,15 @@
 		<Sidebar.Group>
 			<div class="flex flex-col items-center">
 				<h2 class="mb-2 text-xl font-semibold">Add Component</h2>
-				<ToggleGroup.Root variant="outline" orientation="vertical" type="single">
+				<ToggleGroup.Root
+					variant="outline"
+					orientation="vertical"
+					type="single"
+					bind:value={selectedComponentType.id}
+				>
 					{#each Object.values(CEILING_COMPONENTS) as item}
 						{@const Icon = item.icon}
-						<ToggleGroup.Item
-							value={item.id}
-							onclick={() => handleSelectComponent(item as CeilingComponent)}
-							class="w-full px-4 py-2"
-						>
+						<ToggleGroup.Item value={item.id} class="w-full px-4 py-2">
 							<Icon />
 							{item.name}
 						</ToggleGroup.Item>
@@ -80,23 +87,25 @@
 			<div class="flex flex-col items-center">
 				<h2 class="mb-2 text-xl font-semibold">Alter Dimensions</h2>
 				<div class="mb-4 flex w-full flex-col items-center gap-4">
-					<p>Width: {stageConfig.ceilingWidth}</p>
+					<p id="width-label">Width: {stageConfig.ceilingWidth}</p>
 					<Slider
 						type="single"
 						bind:value={stageConfig.ceilingWidth}
 						max={100}
 						step={1}
 						class="max-w-[70%]"
+						aria-labelledby="width-label"
 					/>
 				</div>
 				<div class="flex w-full flex-col items-center gap-4">
-					<p>Height: {stageConfig.ceilingHeight}</p>
+					<p id="height-label">Height: {stageConfig.ceilingHeight}</p>
 					<Slider
 						type="single"
 						bind:value={stageConfig.ceilingHeight}
 						max={100}
 						step={1}
 						class="max-w-[70%]"
+						aria-labelledby="height-label"
 					/>
 				</div>
 			</div>

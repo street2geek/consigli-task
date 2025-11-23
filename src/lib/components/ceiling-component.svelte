@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Circle, Group, Path, type KonvaDragTransformEvent } from 'svelte-konva';
-	import { CEILING_COMPONENT_TYPES, CELL_SIZE } from '$lib/constants';
+	import { CELL_SIZE } from '$lib/constants';
 	import type { StageComponent } from '$lib/types';
+	import { getComponentById } from '$lib/utils';
 
 	type CeilingComponentProps = {
 		component: StageComponent;
@@ -10,8 +11,7 @@
 	};
 
 	let { component, onDragEnd, onSelect }: CeilingComponentProps = $props();
-	const componentType =
-		CEILING_COMPONENT_TYPES[component.type.toUpperCase() as keyof typeof CEILING_COMPONENT_TYPES];
+	const componentType = getComponentById(component.type);
 
 	function handleDragEnd(e: KonvaDragTransformEvent) {
 		e.evt.stopPropagation();
