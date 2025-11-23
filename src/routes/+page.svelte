@@ -128,16 +128,12 @@
 
 		// TODO: fix bug allowing placement on occupied or invalid cells when dragging
 		const cellCoord = `${finalX},${finalY}`;
-		if (invalidCells.has(cellCoord)) {
-			return;
-		}
+		if (invalidCells.has(cellCoord)) return;
 
 		const exists = stageComponents.some(
 			(comp) => comp.id !== id && comp.x === finalX && comp.y === finalY
 		);
-		if (exists) {
-			return;
-		}
+		if (exists) return;
 
 		// Update component position
 		stageComponents = stageComponents.map((comp) =>
