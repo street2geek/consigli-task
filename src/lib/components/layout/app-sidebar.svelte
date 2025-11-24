@@ -4,7 +4,7 @@
 	import ZoomOut from '@lucide/svelte/icons/zoom-out';
 	import { stageConfig, selectedComponentType } from '$lib/state.svelte';
 	import { CEILING_COMPONENT_TYPES as CEILING_COMPONENTS, GRID_SIZE } from '$lib/constants';
-	import type { CeilingComponent, Direction } from '$lib/types';
+	import type { Direction } from '$lib/types';
 	import { Button } from '$lib/components/ui/button';
 	import { Slider } from '$lib/components/ui/slider';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -73,7 +73,7 @@
 					type="single"
 					bind:value={selectedComponentType.id}
 				>
-					{#each Object.values(CEILING_COMPONENTS) as item}
+					{#each Object.values(CEILING_COMPONENTS) as item (item.id)}
 						{@const Icon = item.icon}
 						<ToggleGroup.Item value={item.id} class="w-full px-4 py-2">
 							<Icon />

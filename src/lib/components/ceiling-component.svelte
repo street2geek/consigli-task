@@ -39,7 +39,7 @@
 		strokeWidth={2}
 	/>
 	<Group x={-12} y={-12} scaleX={1} scaleY={1}>
-		{#each componentType.svgPaths as pathData}
+		{#each componentType.svgPaths as pathData, index (index)}
 			<Path data={pathData} fill="black" />
 		{/each}
 	</Group>

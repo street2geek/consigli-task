@@ -74,6 +74,29 @@
 		stageConfig.position.y = pointer.y - mousePointTo.y * newScale;
 	}
 
+	function handleInvalidCellToggle(cellCoord: string) {
+		if (invalidCells.has(cellCoord)) {
+			invalidCells.delete(cellCoord);
+		} else {
+			invalidCells.add(cellCoord);
+		}
+	}
+
+	function handleComponentPlacement(x: number, y: number, cellCoord: string) {
+		if (!invalidCells.has(cellCoord)) return;
+		//Check if component already exists at this position
+		const exists = stageComponents.some((comp) => comp.x === x && comp.y === y);
+		if (exists) return;
+
+		const newComponent = {
+			id: crypto.randomUUID(),
+			type: selectedComponentType.id,
+			x: x,
+			y: y
+		};
+		stageComponents = [...stageComponents, newComponent];
+	}
+
 	function handleStageClick(e: KonvaMouseEvent | KonvaTouchEvent) {
 		const stage = e.target.getStage();
 		if (!stage) return;
@@ -95,29 +118,15 @@
 		const cellCoord = `${x},${y}`;
 
 		if (selectedComponentType.id === CEILING_COMPONENTS.INVALID_AREA.id) {
-			if (invalidCells.has(cellCoord)) {
-				invalidCells.delete(cellCoord);
-			} else {
-				invalidCells.add(cellCoord);
-			}
+			handleInvalidCellToggle(cellCoord);
+			return;
 		}
 
 		if (
 			selectedComponentType.id &&
 			selectedComponentType.id !== CEILING_COMPONENTS.INVALID_AREA.id
 		) {
-			if (!invalidCells.has(cellCoord)) {
-				//Check if component already exists at this position
-				const exists = stageComponents.some((comp) => comp.x === x && comp.y === y);
-				if (exists) return;
-				const newComponent = {
-					id: crypto.randomUUID(),
-					type: selectedComponentType.id,
-					x: x,
-					y: y
-				};
-				stageComponents = [...stageComponents, newComponent];
-			}
+			handleComponentPlacement(x, y, cellCoord);
 		}
 	}
 
@@ -198,7 +207,7 @@
 					stroke="#ddd"
 					strokeWidth={1}
 				/>
-				{#each Array(gridLinesVertical) as _, index}
+				{#each Array(gridLinesVertical) as _, index (index)}
 					<Line
 						stroke="#6D8196"
 						strokeWidth={1}
@@ -210,7 +219,7 @@
 						]}
 					/>
 				{/each}
-				{#each Array(gridLinesHorizontal) as _, index}
+				{#each Array(gridLinesHorizontal) as _, index (index)}
 					<Line
 						stroke="#6D8196"
 						strokeWidth={1}
