@@ -82,21 +82,6 @@
 		}
 	}
 
-	function handleComponentPlacement(x: number, y: number, cellCoord: string) {
-		if (!invalidCells.has(cellCoord)) return;
-		//Check if component already exists at this position
-		const exists = stageComponents.some((comp) => comp.x === x && comp.y === y);
-		if (exists) return;
-
-		const newComponent = {
-			id: crypto.randomUUID(),
-			type: selectedComponentType.id,
-			x: x,
-			y: y
-		};
-		stageComponents = [...stageComponents, newComponent];
-	}
-
 	function handleStageClick(e: KonvaMouseEvent | KonvaTouchEvent) {
 		const stage = e.target.getStage();
 		if (!stage) return;
@@ -126,7 +111,18 @@
 			selectedComponentType.id &&
 			selectedComponentType.id !== CEILING_COMPONENTS.INVALID_AREA.id
 		) {
-			handleComponentPlacement(x, y, cellCoord);
+			if (!invalidCells.has(cellCoord)) {
+				//Check if component already exists at this position
+				const exists = stageComponents.some((comp) => comp.x === x && comp.y === y);
+				if (exists) return;
+				const newComponent = {
+					id: crypto.randomUUID(),
+					type: selectedComponentType.id,
+					x: x,
+					y: y
+				};
+				stageComponents = [...stageComponents, newComponent];
+			}
 		}
 	}
 
