@@ -1,5 +1,11 @@
 import { AlarmSmoke, Fan, Lightbulb, X, WindArrowDown } from '@lucide/svelte';
-import * as lucideIcons from 'lucide';
+import {
+	AlarmSmoke as AlarmSmokeIcon,
+	Fan as FanIcon,
+	Lightbulb as LightbulbIcon,
+	X as XIcon,
+	WindArrowDown as WindArrowDownIcon
+} from 'lucide';
 
 const PIXELS_PER_METER = 66.67; // scale factor
 export const GRID_SIZE = 0.6;
@@ -18,35 +24,35 @@ export const CEILING_COMPONENT_TYPES = {
 		id: 'air_return',
 		name: 'Air Return',
 		color: 'rgba(107, 114, 128, 0.3)',
-		svgPaths: getSvgPaths(lucideIcons.WindArrowDown),
+		svgPaths: getSvgPaths(WindArrowDownIcon),
 		icon: WindArrowDown
 	},
 	AIR_SUPPLY: {
 		id: 'air_supply',
 		name: 'Air Supply',
 		color: 'rgba(59, 130, 246, 0.3)',
-		svgPaths: getSvgPaths(lucideIcons.Fan),
+		svgPaths: getSvgPaths(FanIcon),
 		icon: Fan
 	},
 	LIGHT: {
 		id: 'light',
 		name: 'Light Fitting',
 		color: 'rgba(255, 255, 255, 0.3)',
-		svgPaths: getSvgPaths(lucideIcons.Lightbulb),
+		svgPaths: getSvgPaths(LightbulbIcon),
 		icon: Lightbulb
 	},
 	SMOKE_DETECTOR: {
 		id: 'smoke_detector',
 		name: 'Smoke Detector',
 		color: 'rgba(234, 179, 8, 0.3)',
-		svgPaths: getSvgPaths(lucideIcons.AlarmSmoke),
+		svgPaths: getSvgPaths(AlarmSmokeIcon),
 		icon: AlarmSmoke
 	},
 	INVALID_AREA: {
 		id: 'invalid_area',
 		name: 'Invalid Area',
 		color: 'rgba(239, 68, 68, 0.3)',
-		svgPaths: getSvgPaths(lucideIcons.X),
+		svgPaths: getSvgPaths(XIcon),
 		icon: X
 	}
 };
