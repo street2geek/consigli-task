@@ -217,6 +217,7 @@
 							index * CELL_SIZE,
 							stageConfig.ceilingHeight * CELL_SIZE
 						]}
+						listening={false}
 					/>
 				{/each}
 				{#each Array(gridLinesHorizontal) as _, index (index)}
@@ -224,6 +225,7 @@
 						stroke="#6D8196"
 						strokeWidth={1}
 						points={[0, index * CELL_SIZE, stageConfig.ceilingWidth * CELL_SIZE, index * CELL_SIZE]}
+						listening={false}
 					/>
 				{/each}
 
