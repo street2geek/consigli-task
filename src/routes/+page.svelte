@@ -19,8 +19,10 @@
 	import { CircleX } from '@lucide/svelte';
 	import Ceiling from '$lib/components/ceiling.svelte';
 	import { useSidebar } from '$lib/components/ui/sidebar/context.svelte';
+	import { IsMobile } from '$lib/hooks/is-mobile.svelte';
 
 	const sidebar = useSidebar();
+	const isMobile = new IsMobile();
 
 	let stageContainerEl: HTMLDivElement | null = null;
 	let invalidCells = new SvelteSet('');
@@ -32,14 +34,13 @@
 	let gridLinesVertical = $derived(stageConfig.ceilingWidth + 1);
 
 	function calculateStageDimensions() {
-		if (!stageContainerEl) return;
-		if (sidebar.open) {
-			stageConfig.dimensions.width = window.innerWidth - 255;
-			stageConfig.dimensions.height = window.innerHeight - 64;
-		} else {
-			stageConfig.dimensions.width = window.innerWidth;
-			stageConfig.dimensions.height = window.innerHeight;
-		}
+		if (!stageContainerEl || !browser) return;
+
+		const sidebarWidth = !isMobile.current && sidebar.open ? 255 : 0;
+		const headerHeight = 64;
+
+		stageConfig.dimensions.width = window.innerWidth - sidebarWidth;
+		stageConfig.dimensions.height = window.innerHeight - headerHeight;
 	}
 
 	$effect(() => {
@@ -50,6 +51,13 @@
 	});
 
 	onMount(() => {
+		// Handle window resize
+		function handleResize() {
+			calculateStageDimensions();
+		}
+
+		window.addEventListener('resize', handleResize);
+
 		function handleKeyPress(e: KeyboardEvent) {
 			// Escape to deselect or close dialog
 			if (e.key === 'Escape') {
@@ -62,8 +70,13 @@
 			}
 		}
 
+		window.addEventListener('resize', handleResize);
 		window.addEventListener('keydown', handleKeyPress);
-		return () => window.removeEventListener('keydown', handleKeyPress);
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+			window.removeEventListener('keydown', handleKeyPress);
+		};
 	});
 
 	function handleZoom(e: KonvaWheelEvent) {
