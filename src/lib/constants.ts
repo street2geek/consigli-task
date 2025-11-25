@@ -7,6 +7,9 @@ import {
 	WindArrowDown as WindArrowDownIcon
 } from 'lucide';
 
+export const SIDEBAR_WIDTH_PX = 255;
+export const HEADER_HEIGHT_PX = 64;
+
 const PIXELS_PER_METER = 66.67; // scale factor
 export const GRID_SIZE = 0.6;
 export const CELL_SIZE = GRID_SIZE * PIXELS_PER_METER;

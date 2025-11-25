@@ -28,7 +28,7 @@
 	y={component.y * CELL_SIZE + CELL_SIZE / 2}
 	ondragend={handleDragEnd}
 	onclick={() => onSelect(component.id)}
-	onTap={() => onSelect(component.id)}
+	ontap={() => onSelect(component.id)}
 	draggable={true}
 >
 	<Circle

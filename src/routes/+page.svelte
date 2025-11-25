@@ -9,7 +9,12 @@
 	} from 'svelte-konva';
 	import { SvelteSet } from 'svelte/reactivity';
 	import { browser } from '$app/environment';
-	import { CEILING_COMPONENT_TYPES as CEILING_COMPONENTS, CELL_SIZE } from '$lib/constants';
+	import {
+		CEILING_COMPONENT_TYPES as CEILING_COMPONENTS,
+		CELL_SIZE,
+		HEADER_HEIGHT_PX,
+		SIDEBAR_WIDTH_PX
+	} from '$lib/constants';
 	import type { StageComponent } from '$lib/types';
 	import { selectedComponentType, stageConfig } from '$lib/state.svelte';
 	import { updateZoom, isWithinBounds } from '$lib/utils/stage';
@@ -36,8 +41,8 @@
 	function calculateStageDimensions() {
 		if (!stageContainerEl || !browser) return;
 
-		const sidebarWidth = !isMobile.current && sidebar.open ? 255 : 0;
-		const headerHeight = 64;
+		const sidebarWidth = !isMobile.current && sidebar.open ? SIDEBAR_WIDTH_PX : 0;
+		const headerHeight = HEADER_HEIGHT_PX;
 
 		stageConfig.dimensions.width = window.innerWidth - sidebarWidth;
 		stageConfig.dimensions.height = window.innerHeight - headerHeight;
