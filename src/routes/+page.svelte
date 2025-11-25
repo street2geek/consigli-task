@@ -3,8 +3,6 @@
 	import {
 		Layer,
 		Stage,
-		Rect,
-		Line,
 		type KonvaWheelEvent,
 		type KonvaMouseEvent,
 		type KonvaTouchEvent
@@ -20,6 +18,9 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { CircleX } from '@lucide/svelte';
 	import Ceiling from '$lib/components/ceiling.svelte';
+	import { useSidebar } from '$lib/components/ui/sidebar/context.svelte';
+
+	const sidebar = useSidebar();
 
 	let stageContainerEl: HTMLDivElement | null = null;
 	let invalidCells = new SvelteSet('');
@@ -30,12 +31,25 @@
 	let gridLinesHorizontal = $derived(stageConfig.ceilingHeight + 1);
 	let gridLinesVertical = $derived(stageConfig.ceilingWidth + 1);
 
-	onMount(() => {
-		if (stageContainerEl) {
+	function calculateStageDimensions() {
+		if (!stageContainerEl) return;
+		if (sidebar.open) {
 			stageConfig.dimensions.width = window.innerWidth - 255;
 			stageConfig.dimensions.height = window.innerHeight - 64;
+		} else {
+			stageConfig.dimensions.width = window.innerWidth;
+			stageConfig.dimensions.height = window.innerHeight;
 		}
+	}
 
+	$effect(() => {
+		sidebar.open;
+		if (browser && stageContainerEl) {
+			calculateStageDimensions();
+		}
+	});
+
+	onMount(() => {
 		function handleKeyPress(e: KeyboardEvent) {
 			// Escape to deselect or close dialog
 			if (e.key === 'Escape') {
