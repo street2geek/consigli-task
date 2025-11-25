@@ -19,6 +19,7 @@
 	import CeilingComponent from '$lib/components/ceiling-component.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { CircleX } from '@lucide/svelte';
+	import Ceiling from '$lib/components/ceiling.svelte';
 
 	let stageContainerEl: HTMLDivElement | null = null;
 	let invalidCells = new SvelteSet('');
@@ -198,36 +199,13 @@
 			}}
 		>
 			<Layer>
-				<Rect
-					x={0}
-					y={0}
-					width={stageConfig.ceilingWidth * CELL_SIZE}
-					height={stageConfig.ceilingHeight * CELL_SIZE}
-					fill="#E2E2D7"
-					stroke="#ddd"
-					strokeWidth={1}
+				<Ceiling
+					ceilingWidth={stageConfig.ceilingWidth}
+					ceilingHeight={stageConfig.ceilingHeight}
+					cellSize={CELL_SIZE}
+					verticleLines={gridLinesVertical}
+					horizontalLines={gridLinesHorizontal}
 				/>
-				{#each Array(gridLinesVertical) as _, index (index)}
-					<Line
-						stroke="#6D8196"
-						strokeWidth={1}
-						points={[
-							index * CELL_SIZE,
-							0,
-							index * CELL_SIZE,
-							stageConfig.ceilingHeight * CELL_SIZE
-						]}
-						listening={false}
-					/>
-				{/each}
-				{#each Array(gridLinesHorizontal) as _, index (index)}
-					<Line
-						stroke="#6D8196"
-						strokeWidth={1}
-						points={[0, index * CELL_SIZE, stageConfig.ceilingWidth * CELL_SIZE, index * CELL_SIZE]}
-						listening={false}
-					/>
-				{/each}
 
 				{#each Array.from(invalidCells) as cell (cell)}
 					{@const [x, y] = cell.split(',').map(Number)}
