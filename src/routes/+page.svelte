@@ -39,7 +39,7 @@
 	let gridLinesVertical = $derived(stageConfig.ceilingWidth + 1);
 
 	function calculateStageDimensions() {
-		if (!stageContainerEl || !browser) return;
+		if (!browser || !stageContainerEl) return;
 
 		const sidebarWidth = !isMobile.current && sidebar.open ? SIDEBAR_WIDTH_PX : 0;
 		const headerHeight = HEADER_HEIGHT_PX;
@@ -50,9 +50,7 @@
 
 	$effect(() => {
 		sidebar.open;
-		if (browser) {
-			calculateStageDimensions();
-		}
+		calculateStageDimensions();
 	});
 
 	onMount(() => {
