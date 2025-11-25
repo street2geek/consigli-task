@@ -44,7 +44,7 @@
 
 	$effect(() => {
 		sidebar.open;
-		if (browser && stageContainerEl) {
+		if (browser) {
 			calculateStageDimensions();
 		}
 	});
